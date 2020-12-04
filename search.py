@@ -209,19 +209,48 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #frontier ← a priority queue ordered by PATH-COST, with node as the only element
+    #Create a Queue to hold states path cost so far
+    frontier = util.PriorityQueue()
+    # explored ← an empty set of explored nodes
+    explored = []
+    # path cost so far
+    actionList = []
+    # Place the starting point in the priority queue
+    frontier.push((problem.getStartState(), actionList),0) #node is the only element ordered by path-cost
+    # loop do
+    while True:
+        # if EMPTY?( frontier) then return failure
+        if frontier.isEmpty():
+            raise Exception ('Search Failed')
+        # node ← POP( frontier) /* chooses the shallowest node in frontier */
+        node, actions = frontier.pop()
+        if not node in explored:
+            # add node.STATE to explored
+            explored.append(node)
+            #if a goal has been reached return a list of actions,
+            if problem.isGoalState(node):
+                return actions
+            # for each action in problem.ACTIONS(node.STATE) do
+            #look for children who are successors
+            for successor in problem.getSuccessors(node):
+                state, action, pathCost = successor
+                nActions = actions + [action]
+                #calculating the cost so far
+                cost = problem.getCostOfActions( nActions) 
+                #replace that frontier node with child
+                frontier.push((state, nActions), cost)
+    return []
+    # util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
-    return 0
-
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
 
 # Abbreviations
