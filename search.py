@@ -87,11 +87,68 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    #[Pseudocode For this Part was taken From Artificial Intelligence A Modern Approach Third Edition Stuart J. Russell and Peter Norvig Page.82]
+    # function breadthFirstSearch(problem) returns a solution, or failure
+    # node ← a node with STATE = problem.INITIAL-STATE, PATH-COST = 0
+    # create a node object with state and pathcost
+    node = {
+        'state': problem.getStartState(),
+        'pathCost': 0
+        }
+
+    #if problem.GOAL-TEST(node.STATE) then return SOLUTION(node)
+    #if a goal has been reached return a list of actions,
+    if problem.isGoalState(node['state']):
+        return[] #since we are starting out, no need to take any actions
+
+    # frontier ← a FIFO queue with node as the only element
+    #Create a Queue to hold states
+    frontier =  util.Queue() 
+    frontier.push(node) #node is the only element
+    # explored ← an empty set
+    explored = set()
+    # loop do
+
+    while True:
+        # if EMPTY?( frontier) then return failure
+        if frontier.isEmpty():
+            raise Exception ('Search Failed')
+        # node ← POP( frontier) /* chooses the shallowest node in frontier */
+        node = frontier.pop()
+        # add node.STATE to explored
+        explored.add(node['state'])
+        # for each action in problem.ACTIONS(node.STATE) do
+        #look for children who are successors
+        successors = problem.getSuccessors(node['state'])
+        for successor in successors: 
+            # child ← CHILD-NODE(problem, node, action)
+            #Create a child node based on the information we get from a successor which are state, action, cost
+            child={ 'state': successor[0],
+                    'action': successor[1],
+                    'pathCost':  successor[2],
+                    'parent': node # a parent of a child
+                 }
+                # if child.STATE is not in explored or frontier then
+            if child['state'] not in explored:
+                # if problem.GOAL-TEST(child.STATE) then return SOLUTION(child)
+                #Checking the goal state
+                if problem.isGoalState(child['state']):
+                    actions = []
+                    node = child
+                    while 'parent' in node:
+                        actions.append(node['action']) #this gives a reverse order path 
+                        node = node['parent']
+                    actions.reverse() #reverse the the order in the above line
+                    return actions
+                # frontier ← INSERT(child, frontier)
+                frontier.push(child)
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
