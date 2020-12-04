@@ -87,6 +87,60 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+    # node ← a node with STATE = problem.INITIAL-STATE, PATH-COST = 0
+    # create a node object with state and pathcost
+    node = {
+        'state': problem.getStartState(),
+        'pathCost': 0
+        }
+
+    #if problem.GOAL-TEST(node.STATE) then return SOLUTION(node)
+    #if a goal has been reached return a list of actions,
+    if problem.isGoalState(node['state']):
+        return[] #since we are starting out, no need to take any actions
+
+    # frontier ← a LIFO Stack with node as the only element
+    #Create a Stack to hold states
+    frontier =  util.Stack() 
+    frontier.push(node) #node is the only element
+    # explored ← an empty set
+    explored = set()
+    # loop do
+
+    while True:
+        # if EMPTY?( frontier) then return failure
+        if frontier.isEmpty():
+            raise Exception ('Search Failed')
+        # node ← POP( frontier) /* chooses the shallowest node in frontier */
+        node = frontier.pop()
+        # add node.STATE to explored
+        explored.add(node['state'])
+        # for each action in problem.ACTIONS(node.STATE) do
+        #look for children who are successors
+        successors = problem.getSuccessors(node['state'])
+        for successor in successors: 
+            # child ← CHILD-NODE(problem, node, action)
+            #Create a child node based on the information we get from a successor which are state, action, cost
+            child={ 'state': successor[0],
+                    'action': successor[1],
+                    'pathCost':  successor[2],
+                    'parent': node # a parent of a child
+                 }
+                # if child.STATE is not in explored or frontier then
+            if child['state'] not in explored:
+                # if problem.GOAL-TEST(child.STATE) then return SOLUTION(child)
+                #Checking the goal state
+                if problem.isGoalState(child['state']):
+                    actions = []
+                    node = child
+                    while 'parent' in node:
+                        actions.append(node['action']) #this gives a reverse order path 
+                        node = node['parent']
+                    actions.reverse() #reverse the the order in the above line
+                    return actions
+                else:
+                    # frontier ← INSERT(child, frontier)
+                    frontier.push(child)
 
     util.raiseNotDefined()
 
@@ -146,8 +200,9 @@ def breadthFirstSearch(problem):
                         node = node['parent']
                     actions.reverse() #reverse the the order in the above line
                     return actions
+                else:
                 # frontier ← INSERT(child, frontier)
-                frontier.push(child)
+                    frontier.push(child)
 
     util.raiseNotDefined()
 
